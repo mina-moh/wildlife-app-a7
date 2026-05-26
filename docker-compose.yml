@@ -1,0 +1,14 @@
+services:
+  api:
+    build: ./assignment-4-database-and-authentication-mina-moh
+    container_name: wildlife-api-container
+    ports:
+      - "3000:3000"
+
+  client:
+    build: ./assignment5-interacting-with-data-mina-moh
+    container_name: wildlife-client-container
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
