@@ -5,6 +5,21 @@ This is an Express API that can serve as a back end to an application that allow
 
 ## Caching
 
+### /parks
+Server-side cache: 7 days
+- Because the list of national parks would rarely change (meaning the data from this route is mostly static) and this endpoint is frequently requested caching it for a long makes sense.
+
+### /parks/:id
+Server-side cache: 7 days
+- Individual park lookups are cached to improve performance for frequently accessed parks and their details. This was also a longer cache sicne the details of the park are unlikely to change, however it's not so long to not waste memory on parks that are less commonly requested.
+
+### /species
+Server-side cache: 7 days
+- The full species list is significantly larger than parks and is also very static since species data does not change frequently. Even though this endpoint is not currently heavily used on the client side, caching was added in case of future features such as filtering based on species. A longer cache of 7 days was chosen because updates to species data are expected to be rare.
+
+### /species/:id
+Server-side cache: 7 days
+- Individual species lookups are cached. This cache has the same reasoning as the full species cache: species data is static and unlikely to change often. The longer cache duration ensures efficient retrieval of the specific species if this endpoint is used in future features on the client-side (such as linking sightings to specific species).
 
 ## Security
 
