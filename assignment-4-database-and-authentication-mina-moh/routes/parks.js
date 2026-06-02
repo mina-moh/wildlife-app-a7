@@ -18,14 +18,21 @@ router.get('/', async function(req, res, next) {
 
     parks = data
 
-    myCache.set('parks', parks, 86400)
+    myCache.set('parks', parks, 86400 * 7)
   }
 
   return res.status(200).send({ data: parks })
 })
 
 router.get('/:id', async (req, res) => {
-   const { id } = req.params;
+  const { id } = req.params;
+
+  const cacheKey = `park_${id}`;
+  const cachedPark = myCache.get(cacheKey);
+
+  if (cachedPark) {
+    return res.status(200).send({ data: cachedPark, cached: true });
+  }
 
   const { data, error } = await supabase
     .from('parks')
@@ -36,6 +43,8 @@ router.get('/:id', async (req, res) => {
   if (error) {
     return res.status(404).send({ message: error.message });
   }
+
+  myCache.set(cacheKey, data, 86400 * 7);
 
   return res.status(200).send({ data });
 });

@@ -3,6 +3,9 @@
 
 This is an Express API that can serve as a back end to an application that allows users to track wildlife sightings in US National Parks. It uses Supabase for Postgres database and authentication service.
 
+## Caching
+
+
 ## Security
 
 ### Cross Site Scripting (XSS)
