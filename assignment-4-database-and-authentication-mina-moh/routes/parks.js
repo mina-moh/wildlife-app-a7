@@ -1,18 +1,28 @@
 var express = require('express');
 var router = express.Router();
 const { supabase } = require('../supabaseService.js')
+const NodeCache = require('node-cache')
+const myCache = new NodeCache()
 
 router.get('/', async function(req, res, next) {
-  const { data, error } = await supabase
-  .from('parks')
-  .select()
+  let parks = myCache.get('parks')
 
-  if (error) {
-    return res.status(500).send( "Parks data not found");
+  if (!parks) {
+    const { data, error } = await supabase
+      .from('parks')
+      .select()
+
+    if (error) {
+      return res.status(500).send('Parks data not found')
+    }
+
+    parks = data
+
+    myCache.set('parks', parks, 86400)
   }
 
-  return res.status(200).send({ data });
-});
+  return res.status(200).send({ data: parks })
+})
 
 router.get('/:id', async (req, res) => {
    const { id } = req.params;

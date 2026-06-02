@@ -13,6 +13,20 @@ export function ParksPage() {
   useEffect(() => {
     async function loadParks() {
       try {
+        const cachedParks = localStorage.getItem('parks')
+        const cacheTime = localStorage.getItem('parksCacheTime')
+
+        if (
+          cachedParks &&
+          cacheTime &&
+          Date.now() - Number(cacheTime) < 86400000
+        ) {
+          setParks(JSON.parse(cachedParks))
+          setParksError(null)
+          setParksLoading(false)
+          return
+        }
+
         const res = await fetch('/api/parks')
 
         if (!res.ok) {
@@ -20,6 +34,14 @@ export function ParksPage() {
         }
 
         const result = await res.json()
+
+        localStorage.setItem('parks', JSON.stringify(result.data))
+        
+        localStorage.setItem(
+          'parksCacheTime',
+          Date.now().toString()
+        )
+
         setParks(result.data)
         setParksError(null)
       } catch (err) {
